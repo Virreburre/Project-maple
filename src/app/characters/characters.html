@@ -1,0 +1,95 @@
+<div class="characters-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="page-title">
+      <h1>🎮 My Characters</h1>
+      <p>Manage and view all your MapleStory characters</p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="add-character-btn">+ Add New Character</button>
+    </div>
+  </div>
+
+  <!-- Characters Grid -->
+  <div class="characters-grid">
+    @for (character of characters(); track character.id) {
+      <div class="character-card">
+        <div class="character-header">
+          <div class="character-avatar">
+            <div class="avatar-placeholder">
+              {{ getJobIcon(character.job) }}
+            </div>
+            <div 
+              class="level-badge"
+              [style.background-color]="getLevelColor(character.level)"
+            >
+              {{ character.level }}
+            </div>
+          </div>
+          
+          <div class="character-actions">
+            <button class="action-btn view" title="View Details">👁️</button>
+            <button class="action-btn edit" title="Edit Character">✏️</button>
+            <button class="action-btn delete" title="Delete Character">🗑️</button>
+          </div>
+        </div>
+        
+        <div class="character-info">
+          <h3>{{ character.name }}</h3>
+          <p class="job-server">{{ character.job }} • {{ character.server }}</p>
+          
+          <div class="character-stats">
+            <div class="stat-item">
+              <span class="stat-label">Level</span>
+              <span class="stat-value" [style.color]="getLevelColor(character.level)">
+                {{ character.level }}
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Job</span>
+              <span class="stat-value">{{ character.job }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Server</span>
+              <span class="stat-value">{{ character.server }}</span>
+            </div>
+          </div>
+
+          <div class="experience-section">
+            <div class="exp-header">
+              <span class="exp-label">Experience Progress</span>
+              <span class="exp-percent" [style.color]="getExperienceColor(character.experience)">
+                {{ character.experience }}%
+              </span>
+            </div>
+            <div class="exp-bar">
+              <div 
+                class="exp-fill" 
+                [style.width.%]="character.experience"
+                [style.background-color]="getExperienceColor(character.experience)"
+              ></div>
+            </div>
+          </div>
+          
+          <div class="character-footer">
+            <p class="last-played">
+              <span class="last-played-icon">🕒</span>
+              Last played: {{ character.lastPlayed }}
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Empty State (if no characters) -->
+  @if (characters().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🎮</div>
+      <h3>No Characters Yet</h3>
+      <p>Start your MapleStory journey by adding your first character!</p>
+      <button class="add-character-btn primary">+ Add Your First Character</button>
+    </div>
+  }
+</div>

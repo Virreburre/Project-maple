@@ -1,0 +1,135 @@
+<div class="bossing-container">
+  <div class="bossing-header">
+    <h1>Bossing Tracker</h1>
+    <p>Track your daily and weekly boss completions</p>
+    
+    <div class="reset-buttons">
+      <button class="reset-btn daily" (click)="resetDaily()">Reset Daily</button>
+      <button class="reset-btn weekly" (click)="resetWeekly()">Reset Weekly</button>
+    </div>
+  </div>
+
+  <div class="boss-sections">
+    <!-- Daily Bosses -->
+    <section class="boss-section">
+      <h2 class="section-title">Daily Bosses</h2>
+      <div class="boss-grid">
+        <div 
+          *ngFor="let boss of dailyBosses" 
+          class="boss-card"
+          [class.completed]="boss.completed"
+          (click)="toggleBossCompletion(boss)"
+        >
+          <div class="boss-header">
+            <h3 class="boss-name">{{ boss.name }}</h3>
+            <span class="boss-difficulty" [ngClass]="getDifficultyClass(boss.difficulty)">
+              {{ boss.difficulty }}
+            </span>
+          </div>
+          
+          <div class="boss-info">
+            <div class="info-item">
+              <span class="label">Level:</span>
+              <span class="value">{{ boss.minLevel }}+</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Location:</span>
+              <span class="value">{{ boss.location }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Cooldown:</span>
+              <span class="value">{{ boss.cooldown }}</span>
+            </div>
+          </div>
+
+          <div class="boss-rewards">
+            <h4>Rewards:</h4>
+            <div class="rewards-list">
+              <span *ngFor="let reward of boss.rewards" class="reward-tag">
+                {{ reward }}
+              </span>
+            </div>
+          </div>
+
+          <div class="boss-status">
+            <div class="status-indicator" [class.completed]="boss.completed">
+              <span *ngIf="boss.completed">✓ Completed</span>
+              <span *ngIf="!boss.completed">⏱️ Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Weekly Bosses -->
+    <section class="boss-section">
+      <h2 class="section-title">Weekly Bosses</h2>
+      <div class="boss-grid">
+        <div 
+          *ngFor="let boss of weeklyBosses" 
+          class="boss-card"
+          [class.completed]="boss.completedThisWeek"
+          (click)="toggleBossCompletion(boss)"
+        >
+          <div class="boss-header">
+            <h3 class="boss-name">{{ boss.name }}</h3>
+            <span class="boss-difficulty" [ngClass]="getDifficultyClass(boss.difficulty)">
+              {{ boss.difficulty }}
+            </span>
+          </div>
+          
+          <div class="boss-info">
+            <div class="info-item">
+              <span class="label">Level:</span>
+              <span class="value">{{ boss.minLevel }}+</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Location:</span>
+              <span class="value">{{ boss.location }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Cooldown:</span>
+              <span class="value">{{ boss.cooldown }}</span>
+            </div>
+          </div>
+
+          <div class="boss-rewards">
+            <h4>Rewards:</h4>
+            <div class="rewards-list">
+              <span *ngFor="let reward of boss.rewards" class="reward-tag">
+                {{ reward }}
+              </span>
+            </div>
+          </div>
+
+          <div class="boss-status">
+            <div class="status-indicator" [class.completed]="boss.completedThisWeek">
+              <span *ngIf="boss.completedThisWeek">✓ Completed</span>
+              <span *ngIf="!boss.completedThisWeek">⏱️ Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="bossing-stats">
+    <div class="stat-card">
+      <h3>Daily Progress</h3>
+      <div class="progress-info">
+        <span class="progress-text">
+          {{ getDailyCompleted() }} / {{ dailyBosses.length }} completed
+        </span>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <h3>Weekly Progress</h3>
+      <div class="progress-info">
+        <span class="progress-text">
+          {{ getWeeklyCompleted() }} / {{ weeklyBosses.length }} completed
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,214 @@
+// Color palette matching the home component
+:root {
+  --bg-primary: #2a2d47;
+  --bg-secondary: #353856;
+  --bg-card: #404364;
+  --card-bg: #404364;
+  --text-primary: #ffffff;
+  --text-secondary: #b8bcc8;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --accent-blue-hover: #2563eb;
+  --accent-purple-hover: #7c3aed;
+  --border-color: #4a4d70;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  // Bossing specific colors
+  --success-color: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --success-light: #34d399;
+  --tag-bg: rgba(139, 92, 246, 0.2);
+  --tag-text: #c4b5fd;
+  --status-pending-bg: rgba(75, 85, 99, 0.5);
+  --status-pending-text: #d1d5db;
+  --status-pending-border: #6b7280;
+  --status-completed-bg: rgba(16, 185, 129, 0.2);
+  --status-completed-text: #10b981;
+  --status-completed-border: #10b981;
+  
+  // Difficulty colors
+  --difficulty-normal-bg: rgba(59, 130, 246, 0.2);
+  --difficulty-normal-text: #60a5fa;
+  --difficulty-chaos-bg: rgba(239, 68, 68, 0.2);
+  --difficulty-chaos-text: #f87171;
+  --difficulty-hard-bg: rgba(245, 158, 11, 0.2);
+  --difficulty-hard-text: #fbbf24;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+// Main Navigation
+.navbar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .navbar-brand h1 {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 2rem;
+
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        position: relative;
+
+        &:hover {
+          color: var(--accent-blue);
+          background: rgba(59, 130, 246, 0.1);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  min-height: calc(100vh - 80px);
+}
+
+.main-navigation {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 20px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 70px;
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .nav-logo {
+      font-size: 2rem;
+    }
+
+    .nav-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+
+    li {
+      a {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.95rem;
+
+        &:hover {
+          color: var(--text-primary);
+          background: var(--bg-secondary);
+        }
+
+        &.active {
+          color: var(--text-primary);
+          background: linear-gradient(135deg, var(--accent-purple), #a855f7);
+          box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Main Content
+.main-content {
+  min-height: calc(100vh - 70px);
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .main-navigation {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px;
+    min-height: auto;
+
+    .nav-links {
+      gap: 5px;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      li a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .main-content {
+    min-height: calc(100vh - 120px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-navigation {
+    .nav-brand .nav-title {
+      font-size: 1.2rem;
+    }
+
+    .nav-links {
+      li a {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
