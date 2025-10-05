@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 interface Boss {
   id: number;
@@ -17,7 +16,7 @@ interface Boss {
 @Component({
   selector: 'app-bossing',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './bossing.html',
   styleUrl: './bossing.scss'
 })
