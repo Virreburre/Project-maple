@@ -1,19 +1,13 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home';
-import { CharactersComponent } from './characters/characters';
+import { CharacterComponent } from './character/character';
 import { BossingComponent } from './bossing/bossing';
-import { DashboardComponent } from './dashboard/dashboard';
-import { CharacterStatsComponent } from './character-stats/character-stats';
-import { ProgressTrackerComponent } from './progress-tracker/progress-tracker';
-import { EquipmentTrackerComponent } from './equipment-tracker/equipment-tracker';
+import { AnalysisComponent } from './analysis/analysis';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'characters', component: CharactersComponent },
+  { path: 'character', component: CharacterComponent },
   { path: 'bossing', component: BossingComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'character-stats', component: CharacterStatsComponent },
-  { path: 'progress-tracker', component: ProgressTrackerComponent },
-  { path: 'equipment-tracker', component: EquipmentTrackerComponent },
+  { path: 'analysis', component: AnalysisComponent },
   { path: '**', redirectTo: '' }
 ];

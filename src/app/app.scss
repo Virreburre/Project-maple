@@ -95,6 +95,32 @@ body {
           background: rgba(59, 130, 246, 0.1);
           transform: translateY(-2px);
         }
+
+        // Active state highlighting
+        &.active {
+          color: var(--accent-purple);
+          background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
+          font-weight: 600;
+          box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+          
+          &::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 3px;
+          }
+
+          &:hover {
+            color: var(--accent-purple);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.15));
+            transform: translateY(-1px);
+          }
+        }
       }
     }
   }

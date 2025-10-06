@@ -105,7 +105,7 @@ export class NexonApiService {
    */
   async getCharacterLevelAndImage(
     characterName: string
-  ): Promise<{ level: number; imageUrl: string } | null> {
+  ): Promise<{ level: number; imageUrl: string; exp: number } | null> {
     console.log('[NexonAPI] getCharacterLevelAndImage called for:', characterName);
 
     return this.requestQueue.enqueue(async () => {
@@ -140,6 +140,7 @@ export class NexonApiService {
               return {
                 level: character.level,
                 imageUrl: character.characterImgURL,
+                exp: character.exp,
               };
             }
           } else {

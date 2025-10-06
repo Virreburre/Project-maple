@@ -1,0 +1,178 @@
+﻿<div class="character-container">
+  <div class="page-header">
+    <h1>Characters</h1>
+    <p>Manage your MapleStory characters</p>
+  </div>
+  
+  <div class="characters-grid" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let character of characters; let i = index" cdkDrag class="character-container">
+      <div class="character-card" [class.expanded]="character.isExpanded">
+      <div class="character-section">
+        <div class="character-left">
+          <div class="character-avatar" *ngIf="character.imageUrl && !character.isLoading">
+            <img [src]="character.imageUrl" [alt]="character.name" class="character-image">
+          </div>
+          
+          <div class="character-avatar loading" *ngIf="character.isLoading">
+            <div class="loading-spinner"></div>
+          </div>
+          
+          <div class="character-avatar placeholder" *ngIf="!character.imageUrl && !character.isLoading">
+            <div class="avatar-placeholder">{{ character.name.charAt(0).toUpperCase() }}</div>
+          </div>
+          
+          <div class="character-name">
+            <h3>{{ character.name }}</h3>
+          </div>
+        </div>
+      </div>
+      
+      <div class="character-badges">
+        <div class="badge class-badge">
+          <span class="badge-text">{{ character.class }}</span>
+        </div>
+        
+        <div class="badge level-exp-badge" *ngIf="character.level">
+          <span class="level-text">Lv. {{ character.level }}</span>
+          <span class="exp-text" *ngIf="character.expPercentage"> {{ character.expPercentage }}</span>
+        </div>
+        
+        <div class="badge loading-badge" *ngIf="character.isLoading">
+          <span class="badge-text">Loading...</span>
+        </div>
+      </div>
+      
+      <button class="expand-btn" (click)="toggleExpand(i)" title="Expand/Collapse Character">
+        <span [class]="character.isExpanded ? 'arrow-up' : 'arrow-down'">
+          {{ character.isExpanded ? '▲' : '▼' }}
+        </span>
+      </button>
+      
+      <button class="delete-btn" (click)="confirmDeleteCharacter(i)" title="Delete Character">
+        <span class="delete-text">×</span>
+      </button>
+      </div>
+
+      <!-- Separate Equipment Box (appears below character card when expanded) -->
+      <div class="equipment-box" *ngIf="character.isExpanded">
+        <h4>Equipment</h4>
+        <div class="equipment-grid">
+          <!-- Left side equipment slots -->
+          <div class="equipment-left">
+            <div class="equipment-slot" title="Ring 1"></div>
+            <div class="equipment-slot" title="Ring 2"></div>
+            <div class="equipment-slot" title="Ring 3"></div>
+            <div class="equipment-slot" title="Ring 4"></div>
+            <div class="equipment-slot" title="Pendant 1"></div>
+            <div class="equipment-slot" title="Pendant 2"></div>
+          </div>
+          
+          <!-- Center equipment slots (no character image) -->
+          <div class="equipment-center">
+            <div class="equipment-slots-top">
+              <div class="equipment-slot" title="Hat"></div>
+              <div class="equipment-slot" title="Emblem"></div>
+              <div class="equipment-slot" title="Badge"></div>
+            </div>
+            
+            <div class="equipment-slots-middle">
+              <div class="equipment-slot" title="Medal"></div>
+              <div class="equipment-slot" title="Secondary"></div>
+              <div class="equipment-slot" title="Pocket"></div>
+            </div>
+          </div>
+          
+          <!-- Right side equipment slots -->
+          <div class="equipment-right">
+            <div class="equipment-slot" title="Face Accessory"></div>
+            <div class="equipment-slot" title="Eye Accessory"></div>
+            <div class="equipment-slot" title="Earrings"></div>
+            <div class="equipment-slot" title="Top"></div>
+            <div class="equipment-slot" title="Bottom"></div>
+            <div class="equipment-slot" title="Shoes"></div>
+            <div class="equipment-slot" title="Gloves"></div>
+            <div class="equipment-slot" title="Cape"></div>
+            <div class="equipment-slot" title="Weapon"></div>
+            <div class="equipment-slot" title="Belt"></div>
+            <div class="equipment-slot" title="Shoulder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="add-character-card" (click)="showAddCharacterForm = !showAddCharacterForm">
+      <div class="add-icon">+</div>
+      <p>Add New Character</p>
+    </div>
+  </div>
+  
+  <div class="add-character-form" [class.active]="showAddCharacterForm">
+    <div class="form-card">
+      <h3>Add New Character</h3>
+      <form (ngSubmit)="addCharacter()" #characterForm="ngForm">
+        <div class="form-group">
+          <label for="characterName">Character Name</label>
+          <input 
+            type="text" 
+            id="characterName" 
+            [(ngModel)]="newCharacter.name" 
+            name="characterName" 
+            required>
+        </div>
+        
+        <div class="form-group">
+          <label for="characterClass">Class</label>
+          <div class="class-search-container">
+            <input 
+              type="text" 
+              id="characterClass" 
+              [(ngModel)]="classSearchTerm"
+              (input)="onClassSearchInput()"
+              (focus)="onClassInputFocus()"
+              (blur)="onClassInputBlur()"
+              name="characterClass" 
+              placeholder="Type to search classes..."
+              required>
+            <input type="hidden" [(ngModel)]="newCharacter.class" name="selectedClass" required>
+            
+            <div class="class-dropdown" *ngIf="showClassDropdown">
+              <div class="search-info" *ngIf="classSearchTerm">
+                {{ filteredClasses.length }} class(es) found
+              </div>
+              <div 
+                class="class-option" 
+                *ngFor="let className of filteredClasses"
+                (mousedown)="selectClass(className)">
+                {{ className }}
+              </div>
+              <div class="no-results" *ngIf="classSearchTerm && filteredClasses.length === 0">
+                No classes found matching "{{ classSearchTerm }}"
+              </div>
+            </div>
+            
+            <div class="selected-class" *ngIf="newCharacter.class && !showClassDropdown">
+              Selected: <span class="class-name">{{ newCharacter.class }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cancelAdd()">Cancel</button>
+          <button type="submit" class="btn-submit" [disabled]="!characterForm.form.valid">Add Character</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Dialog -->
+  <div class="delete-confirmation-overlay" *ngIf="showDeleteConfirmation" (click)="cancelDelete()">
+    <div class="delete-confirmation-dialog" (click)="$event.stopPropagation()">
+      <h3>Are you sure?</h3>
+      <p>This will permanently delete the character.</p>
+      <div class="dialog-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">Back</button>
+        <button class="btn-delete" (click)="deleteCharacter()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
