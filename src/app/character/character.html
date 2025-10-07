@@ -1,100 +1,242 @@
-﻿<div class="character-container">
-  <div class="page-header">
-    <h1>Characters</h1>
-    <p>Manage your MapleStory characters</p>
+﻿<div class="modern-character-container">
+  <div class="header-section">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="maple-icon">🍁</span>
+        Character Arsenal
+      </h1>
+      <p class="page-subtitle">Manage your MapleStory characters and equipment</p>
+    </div>
+    <button class="add-character-btn" (click)="showAddCharacterForm = true">
+      <span class="btn-icon">✨</span>
+      Add Character
+    </button>
   </div>
-  
-  <div class="characters-grid" cdkDropList (cdkDropListDropped)="drop($event)">
-    <div *ngFor="let character of characters; let i = index" cdkDrag class="character-container">
-      <div class="character-card" [class.expanded]="character.isExpanded">
-      <div class="character-section">
-        <div class="character-left">
-          <div class="character-avatar" *ngIf="character.imageUrl && !character.isLoading">
-            <img [src]="character.imageUrl" [alt]="character.name" class="character-image">
-          </div>
-          
-          <div class="character-avatar loading" *ngIf="character.isLoading">
-            <div class="loading-spinner"></div>
-          </div>
-          
-          <div class="character-avatar placeholder" *ngIf="!character.imageUrl && !character.isLoading">
-            <div class="avatar-placeholder">{{ character.name.charAt(0).toUpperCase() }}</div>
-          </div>
-          
-          <div class="character-name">
-            <h3>{{ character.name }}</h3>
-          </div>
+
+  <!-- Main Character Highlight -->
+  <div *ngIf="getMainCharacter()" class="main-character-spotlight">
+    <div class="spotlight-header">
+      <span class="crown-icon">👑</span>
+      <h2>Main Character</h2>
+    </div>
+    <div class="main-char-card">
+      <div class="main-char-avatar">
+        <img *ngIf="getMainCharacter()?.imageUrl" 
+             [src]="getMainCharacter()?.imageUrl" 
+             [alt]="getMainCharacter()?.name"
+             class="main-char-image">
+        <div *ngIf="!getMainCharacter()?.imageUrl" class="main-char-placeholder">
+          {{ getMainCharacter()?.name?.charAt(0)?.toUpperCase() || '?' }}
         </div>
       </div>
-      
-      <div class="character-badges">
-        <div class="badge class-badge">
-          <span class="badge-text">{{ character.class }}</span>
-        </div>
-        
-        <div class="badge level-exp-badge" *ngIf="character.level">
-          <span class="level-text">Lv. {{ character.level }}</span>
-          <span class="exp-text" *ngIf="character.expPercentage"> {{ character.expPercentage }}</span>
-        </div>
-        
-        <div class="badge loading-badge" *ngIf="character.isLoading">
-          <span class="badge-text">Loading...</span>
+      <div class="main-char-info">
+        <h3 class="main-char-name">{{ getMainCharacter()?.name }}</h3>
+        <div class="main-char-details">
+          <span class="main-char-class">{{ getMainCharacter()?.class }}</span>
+          <span class="main-char-level" *ngIf="getMainCharacter()?.level">
+            Level {{ getMainCharacter()?.level }}
+          </span>
+          <span class="main-char-exp" *ngIf="getMainCharacter()?.expPercentage">
+            {{ getMainCharacter()?.expPercentage }}
+          </span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Character Grid -->
+  <div class="modern-characters-grid" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let character of characters; let i = index" 
+         cdkDrag 
+         class="character-card-modern"
+         [class.main-character]="character.isMain"
+         [class.expanded]="character.isExpanded">
       
-      <button class="expand-btn" (click)="toggleExpand(i)" title="Expand/Collapse Character">
-        <span [class]="character.isExpanded ? 'arrow-up' : 'arrow-down'">
-          {{ character.isExpanded ? '▲' : '▼' }}
-        </span>
-      </button>
-      
-      <button class="delete-btn" (click)="confirmDeleteCharacter(i)" title="Delete Character">
-        <span class="delete-text">×</span>
-      </button>
+      <!-- Character Card Header -->
+      <div class="card-header">
+        <div class="character-avatar-section">
+          <div class="avatar-container">
+            <img *ngIf="character.imageUrl && !character.isLoading" 
+                 [src]="character.imageUrl" 
+                 [alt]="character.name" 
+                 class="character-image-modern">
+            
+            <div *ngIf="character.isLoading" class="loading-spinner-modern"></div>
+            
+            <div *ngIf="!character.imageUrl && !character.isLoading" 
+                 class="avatar-placeholder-modern">
+              {{ character.name.charAt(0).toUpperCase() }}
+            </div>
+
+            <!-- Main Character Crown -->
+            <div *ngIf="character.isMain" class="main-crown">👑</div>
+          </div>
+          
+          <div class="character-info-section">
+            <h3 class="character-name-modern">{{ character.name }}</h3>
+            <div class="character-meta">
+              <span class="character-class-modern">{{ character.class }}</span>
+              <div class="level-exp-container" *ngIf="character.level">
+                <span class="level-modern">Lv. {{ character.level }}</span>
+                <span class="exp-modern" *ngIf="character.expPercentage">{{ character.expPercentage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="card-actions">
+          <button class="action-btn main-btn" 
+                  (click)="setMainCharacter(i)" 
+                  [class.active]="character.isMain"
+                  title="Set as Main Character">
+            <span class="btn-icon">👑</span>
+          </button>
+          
+          <button class="action-btn equipment-btn" 
+                  (click)="openEquipmentModal(i)"
+                  title="Manage Equipment">
+            <span class="btn-icon">⚔️</span>
+          </button>
+          
+          <button class="action-btn refresh-btn" 
+                  (click)="updateCharacterExperience(i)"
+                  title="Update Experience">
+            <span class="btn-icon">🔄</span>
+          </button>
+          
+          <button class="action-btn expand-btn" 
+                  (click)="toggleExpand(i)" 
+                  title="Show/Hide Details">
+            <span class="btn-icon">{{ character.isExpanded ? '⬆️' : '⬇️' }}</span>
+          </button>
+          
+          <button class="action-btn delete-btn" 
+                  (click)="confirmDeleteCharacter(i)" 
+                  title="Delete Character">
+            <span class="btn-icon">🗑️</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Separate Equipment Box (appears below character card when expanded) -->
-      <div class="equipment-box" *ngIf="character.isExpanded">
-        <h4>Equipment</h4>
-        <div class="equipment-grid">
-          <!-- Left side equipment slots -->
-          <div class="equipment-left">
-            <div class="equipment-slot" title="Ring 1"></div>
-            <div class="equipment-slot" title="Ring 2"></div>
-            <div class="equipment-slot" title="Ring 3"></div>
-            <div class="equipment-slot" title="Ring 4"></div>
-            <div class="equipment-slot" title="Pendant 1"></div>
-            <div class="equipment-slot" title="Pendant 2"></div>
-          </div>
-          
-          <!-- Center equipment slots (no character image) -->
-          <div class="equipment-center">
-            <div class="equipment-slots-top">
-              <div class="equipment-slot" title="Hat"></div>
-              <div class="equipment-slot" title="Emblem"></div>
-              <div class="equipment-slot" title="Badge"></div>
+      <!-- Expanded Content -->
+      <div *ngIf="character.isExpanded" class="expanded-content">
+        <div class="stats-and-equipment">
+          <!-- Experience History Chart -->
+          <div class="exp-history-section">
+            <h4>📈 Experience Progress</h4>
+            <div class="exp-chart" *ngIf="character.expHistory && character.expHistory.length > 0">
+              <div class="chart-bars">
+                <div *ngFor="let entry of character.expHistory.slice(0, 7)" 
+                     class="exp-bar"
+                     [style.height.%]="(entry.gained / getMaxExpGain(character)) * 100"
+                     [title]="entry.date + ': +' + entry.gained.toLocaleString() + ' EXP'">
+                  <span class="exp-value">{{ formatExpValue(entry.gained) }}</span>
+                </div>
+              </div>
+              <div class="chart-labels">
+                <span *ngFor="let entry of character.expHistory.slice(0, 7)" class="date-label">
+                  {{ formatDate(entry.date) }}
+                </span>
+              </div>
             </div>
-            
-            <div class="equipment-slots-middle">
-              <div class="equipment-slot" title="Medal"></div>
-              <div class="equipment-slot" title="Secondary"></div>
-              <div class="equipment-slot" title="Pocket"></div>
+            <div *ngIf="!character.expHistory || character.expHistory.length === 0" class="no-data">
+              No experience data yet. Click the refresh button to start tracking!
             </div>
           </div>
-          
-          <!-- Right side equipment slots -->
-          <div class="equipment-right">
-            <div class="equipment-slot" title="Face Accessory"></div>
-            <div class="equipment-slot" title="Eye Accessory"></div>
-            <div class="equipment-slot" title="Earrings"></div>
-            <div class="equipment-slot" title="Top"></div>
-            <div class="equipment-slot" title="Bottom"></div>
-            <div class="equipment-slot" title="Shoes"></div>
-            <div class="equipment-slot" title="Gloves"></div>
-            <div class="equipment-slot" title="Cape"></div>
-            <div class="equipment-slot" title="Weapon"></div>
-            <div class="equipment-slot" title="Belt"></div>
-            <div class="equipment-slot" title="Shoulder"></div>
+
+          <!-- Equipment Grid -->
+          <div class="modern-equipment-section">
+            <h4>⚔️ Equipment Setup</h4>
+            <div class="equipment-grid-modern">
+              <!-- Top Row -->
+              <div class="equipment-row">
+                <div class="equipment-slot-modern" data-slot="helmet" title="Helmet">
+                  <span class="slot-icon">⛑️</span>
+                  <div *ngIf="character.equipment?.helmet" class="equipped-item">
+                    {{ character.equipment?.helmet?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern" data-slot="pendant" title="Pendant">
+                  <span class="slot-icon">📿</span>
+                  <div *ngIf="character.equipment?.pendant" class="equipped-item">
+                    {{ character.equipment?.pendant?.name }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle Row -->
+              <div class="equipment-row">
+                <div class="equipment-slot-modern" data-slot="weapon" title="Weapon">
+                  <span class="slot-icon">⚔️</span>
+                  <div *ngIf="character.equipment?.weapon" class="equipped-item">
+                    {{ character.equipment?.weapon?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern" data-slot="top" title="Top">
+                  <span class="slot-icon">👕</span>
+                  <div *ngIf="character.equipment?.top" class="equipped-item">
+                    {{ character.equipment?.top?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern" data-slot="secondary" title="Secondary">
+                  <span class="slot-icon">🛡️</span>
+                  <div *ngIf="character.equipment?.secondary" class="equipped-item">
+                    {{ character.equipment?.secondary?.name }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Row -->
+              <div class="equipment-row">
+                <div class="equipment-slot-modern" data-slot="gloves" title="Gloves">
+                  <span class="slot-icon">🧤</span>
+                  <div *ngIf="character.equipment?.gloves" class="equipped-item">
+                    {{ character.equipment?.gloves?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern" data-slot="bottom" title="Bottom">
+                  <span class="slot-icon">👖</span>
+                  <div *ngIf="character.equipment?.bottom" class="equipped-item">
+                    {{ character.equipment?.bottom?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern" data-slot="shoes" title="Shoes">
+                  <span class="slot-icon">👟</span>
+                  <div *ngIf="character.equipment?.shoes" class="equipped-item">
+                    {{ character.equipment?.shoes?.name }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rings Row -->
+              <div class="rings-row">
+                <div class="equipment-slot-modern ring-slot" data-slot="ring1" title="Ring 1">
+                  <span class="slot-icon">💍</span>
+                  <div *ngIf="character.equipment?.ring1" class="equipped-item">
+                    {{ character.equipment?.ring1?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern ring-slot" data-slot="ring2" title="Ring 2">
+                  <span class="slot-icon">💍</span>
+                  <div *ngIf="character.equipment?.ring2" class="equipped-item">
+                    {{ character.equipment?.ring2?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern ring-slot" data-slot="ring3" title="Ring 3">
+                  <span class="slot-icon">💍</span>
+                  <div *ngIf="character.equipment?.ring3" class="equipped-item">
+                    {{ character.equipment?.ring3?.name }}
+                  </div>
+                </div>
+                <div class="equipment-slot-modern ring-slot" data-slot="ring4" title="Ring 4">
+                  <span class="slot-icon">💍</span>
+                  <div *ngIf="character.equipment?.ring4" class="equipped-item">
+                    {{ character.equipment?.ring4?.name }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -175,4 +317,3 @@
       </div>
     </div>
   </div>
-</div>

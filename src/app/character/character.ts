@@ -5,6 +5,14 @@ import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-
 import { NexonApiService } from '../services/nexon-api';
 import { ExperienceService } from '../services/experience.service';
 
+interface Equipment {
+  name: string;
+  type: string;
+  starforce?: number;
+  potential?: string;
+  bonus?: string;
+}
+
 interface Character {
   name: string;
   class: string;
@@ -14,6 +22,32 @@ interface Character {
   expPercentage?: string;
   isLoading?: boolean;
   isExpanded?: boolean;
+  isMain?: boolean;
+  equipment?: {
+    helmet?: Equipment;
+    top?: Equipment;
+    bottom?: Equipment;
+    weapon?: Equipment;
+    secondary?: Equipment;
+    emblem?: Equipment;
+    pendant?: Equipment;
+    ring1?: Equipment;
+    ring2?: Equipment;
+    ring3?: Equipment;
+    ring4?: Equipment;
+    earrings?: Equipment;
+    face?: Equipment;
+    eye?: Equipment;
+    belt?: Equipment;
+    shoulder?: Equipment;
+    gloves?: Equipment;
+    cape?: Equipment;
+    shoes?: Equipment;
+    android?: Equipment;
+    heart?: Equipment;
+  };
+  lastExpUpdate?: Date;
+  expHistory?: { date: string; exp: number; gained: number }[];
 }
 
 @Component({
@@ -319,5 +353,104 @@ export class CharacterComponent implements OnInit {
     this.classSearchTerm = '';
     this.showClassDropdown = false;
     this.showAddCharacterForm = false;
+  }
+
+  // New Methods for Enhanced Features
+  setMainCharacter(index: number) {
+    // Remove main status from all characters
+    this.characters.forEach(char => char.isMain = false);
+    // Set selected character as main
+    this.characters[index].isMain = true;
+    this.saveCharacters();
+    console.log(`[CharacterComponent] Set ${this.characters[index].name} as main character`);
+  }
+
+  getMainCharacter(): Character | null {
+    return this.characters.find(char => char.isMain) || null;
+  }
+
+  openEquipmentModal(characterIndex: number) {
+    // Will be implemented with the new UI
+    console.log(`[CharacterComponent] Opening equipment for ${this.characters[characterIndex].name}`);
+  }
+
+  updateEquipment(characterIndex: number, slot: string, equipment: Equipment | null) {
+    if (!this.characters[characterIndex].equipment) {
+      this.characters[characterIndex].equipment = {};
+    }
+    
+    if (equipment) {
+      (this.characters[characterIndex].equipment as any)[slot] = equipment;
+    } else {
+      delete (this.characters[characterIndex].equipment as any)[slot];
+    }
+    
+    this.saveCharacters();
+  }
+
+  async updateCharacterExperience(characterIndex: number) {
+    const character = this.characters[characterIndex];
+    if (!character) return;
+
+    try {
+      const apiData = await this.nexonApi.getCharacterLevelAndImage(character.name);
+      if (apiData && apiData.exp !== undefined) {
+        const oldExp = character.exp || 0;
+        const newExp = apiData.exp;
+        const expGained = newExp - oldExp;
+
+        // Update experience history
+        if (!character.expHistory) {
+          character.expHistory = [];
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        const existingEntry = character.expHistory.find(entry => entry.date === today);
+
+        if (existingEntry) {
+          existingEntry.exp = newExp;
+          existingEntry.gained += expGained;
+        } else {
+          character.expHistory.push({
+            date: today,
+            exp: newExp,
+            gained: expGained
+          });
+        }
+
+        // Keep only last 30 days
+        character.expHistory = character.expHistory
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 30);
+
+        character.exp = newExp;
+        character.level = apiData.level;
+        character.expPercentage = this.experienceService.formatExpPercentage(newExp, apiData.level) || undefined;
+        character.lastExpUpdate = new Date();
+
+        this.saveCharacters();
+        console.log(`[CharacterComponent] Updated experience for ${character.name}: +${expGained.toLocaleString()} exp`);
+      }
+    } catch (error) {
+      console.error(`[CharacterComponent] Failed to update experience for ${character.name}:`, error);
+    }
+  }
+
+  // Helper Methods for New UI
+  getMaxExpGain(character: Character): number {
+    if (!character.expHistory || character.expHistory.length === 0) return 1;
+    return Math.max(...character.expHistory.map(entry => entry.gained));
+  }
+
+  formatExpValue(exp: number): string {
+    if (exp >= 1000000000) return Math.round(exp / 1000000000) + 'B';
+    if (exp >= 1000000) return Math.round(exp / 1000000) + 'M';
+    if (exp >= 1000) return Math.round(exp / 1000) + 'K';
+    return exp.toString();
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return (date.getMonth() + 1) + '/' + date.getDate();
   }
 }
